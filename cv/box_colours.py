@@ -1,6 +1,19 @@
 from enum import Enum
 from typing import Tuple
 
+name_mapping = {
+    "THREAT": [
+        "breana",
+        "callum",
+        "hamish",
+    ],
+    "BOX_KNOWLEDGE": [
+        "chris",
+    ],
+    "ANALOG_INTERFACE": ["ethan"],
+    "ASSET_CATALYST": ["daniel"],
+}
+
 
 class BoxColors(Enum):
     """
@@ -31,6 +44,22 @@ class BoxColors(Enum):
     BOX_KNOWLEDGE = 2
     ANALOG_INTERFACE = 3
     ASSET_CATALYST = 4
+
+    @staticmethod
+    def from_name(name: str) -> "BoxColors":
+        if name in name_mapping["THREAT"]:
+            return BoxColors.THREAT
+
+        elif name in name_mapping["BOX_KNOWLEDGE"]:
+            return BoxColors.BOX_KNOWLEDGE
+
+        elif name in name_mapping["ANALOG_INTERFACE"]:
+            return BoxColors.ANALOG_INTERFACE
+
+        elif name in name_mapping["ASSET_CATALYST"]:
+            return BoxColors.ASSET_CATALYST
+
+        return BoxColors.UNKNOWN
 
     @staticmethod
     def get_yellow() -> Tuple[int, int, int]:

@@ -20,6 +20,7 @@ bot = BotBase(
 bot.cv = CV(bot)
 bot.project_6_id = 894497833053462529
 
+
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -190,7 +191,7 @@ async def recognize(ctx):
         data.top_left_y,
         data.bottom_right_x,
         data.bottom_right_y,
-        BoxColors.ASSET_CATALYST,
+        BoxColors.from_name(data.name),
         data.name,
     )
 
