@@ -31,14 +31,15 @@ def inject_cam(f):
 
 
 class CV:
-    def __init__(self, bot):
+    def __init__(self, bot, *, min_width: int = 50, min_height: int = 50):
         self.bot: BotBase = bot
         self.feed = None
         self.cwd = str(Path(__file__).parents[0])
 
         self.image_suffix = itertools.count().__next__
 
-        self.current_frame = None
+        self.min_width = min_width
+        self.min_height = min_height
 
     @inject_cam
     def take_picture(self):
@@ -106,7 +107,7 @@ class CV:
         # noinspection PyTypeChecker
         return score, diff
 
-    def visualize_image_differences(self, diff: np.ndarray):
+    def get_image_differences(self, diff: np.ndarray):
         """
         Visualize the differences between images
         """
@@ -118,8 +119,20 @@ class CV:
 
         return thresh, cnts
 
-    def get_biggest_difference(self, contours):
-        pass
+    def get_relevant_differences(self, contours):
+        """
+        Returns the relevant contours based on a set of criteria
+
+        This essentially gets rid of the shitty small changes
+        """
+        relevant_contours = []
+        for contour in contours:
+            x, y, w, h = cv2.boundingRect(contour)
+
+            if w > self.min_width and h > self.min_height:
+                relevant_contours.append(contour)
+
+        return relevant_contours
 
     def release(self) -> None:
         """Cleans up video objects before shutdown"""

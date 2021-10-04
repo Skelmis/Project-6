@@ -55,7 +55,7 @@ async def com(ctx):
     # await ctx.send(file=file)
 
     diff_score, actual_diffs = bot.cv.compare_images(image, image_two)
-    thresh, cnts = bot.cv.visualize_image_differences(actual_diffs)
+    thresh, cnts = bot.cv.get_image_differences(actual_diffs)
 
     # loop over the contours
     for c in cnts:
@@ -94,11 +94,8 @@ async def com(ctx):
 async def diff(ctx):
     """Given two images, return a box around the differences"""
     image_one = bot.cv.take_picture()
-    path_one = bot.cv.save_picture(image_one)
-    await asyncio.sleep(5)
-
+    await asyncio.sleep(10)
     image_two = bot.cv.take_picture()
-    path_two = bot.cv.save_picture(image_two)
 
     diff_score, actual_diffs = bot.cv.compare_images(image_one, image_two)
     if diff_score > float(0.9):
@@ -106,10 +103,35 @@ async def diff(ctx):
             f"These images appear too similar to figure out, will try regardless.\nSSIM: {diff_score}"
         )
 
-    _, contours = bot.cv.visualize_image_differences(actual_diffs)
-    print(type(contours), len(contours))
+    _, contours = bot.cv.get_image_differences(actual_diffs)
+    # pprint(contours)
 
-    print(diff_score)
+    # Loop over all contours and get all
+    # which are over 50 x 50 pixels
+    relevant_contours = []
+    for contour in contours:
+        x, y, w, h = cv2.boundingRect(contour)
+
+        print(w, h)
+
+        if w > 50 and h > 50:
+            relevant_contours.append(contour)
+
+    for contour in relevant_contours:
+        # compute the bounding box of the contour and then draw the
+        # bounding box on both input images to represent where the two
+        # images differ
+        x, y, w, h = cv2.boundingRect(contour)
+        cv2.rectangle(image_one, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        cv2.rectangle(image_two, (x, y), (x + w, y + h), (0, 0, 255), 2)
+
+    path = bot.cv.save_picture(image_one)
+    file = discord.File(path)
+    await ctx.send(file=file)
+
+    path = bot.cv.save_picture(image_two)
+    file = discord.File(path)
+    await ctx.send(file=file)
 
 
 @bot.command(aliases=["l"])
