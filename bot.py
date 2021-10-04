@@ -69,8 +69,6 @@ async def com(ctx):
         cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
         cv2.rectangle(image_two, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
-        return
-
     await ctx.send("Here is the output for differences")
     # show the output images
     path = bot.cv.save_picture(image)
@@ -158,7 +156,7 @@ async def showdiff(ctx):
 
 
 @bot.command()
-async def face(ctx):
+async def faceboxes(ctx):
     """Attempts to detect a face"""
     image = bot.cv.take_picture()
     path = bot.cv.save_picture(image)

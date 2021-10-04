@@ -9,9 +9,13 @@ class FacialRecognition:
         self.bot = bot
         self.cv = cv
 
+        self.cwd = os.path.join(cv.cwd, "facial_recognition")
+
+        self.min_face_confidence: float = 0.5
+
         self.net: cv2.dnn_Net = cv2.dnn.readNetFromCaffe(
-            os.path.join(cv.cwd, "caffe", "deploy.prototxt"),
-            os.path.join(cv.cwd, "caffe", "opencv_face_detector.caffemodel"),
+            os.path.join(self.cwd, "caffe", "deploy.prototxt"),
+            os.path.join(self.cwd, "caffe", "opencv_face_detector.caffemodel"),
         )
 
     def image_to_blob(self, image: np.ndarray):
@@ -35,7 +39,7 @@ class FacialRecognition:
             confidence = detections[0, 0, i, 2]
             # filter out weak detections by ensuring the `confidence` is
             # greater than the minimum confidence
-            if confidence > 0.5:
+            if confidence > self.min_face_confidence:
                 # compute the (x, y)-coordinates of the bounding box for the
                 # object
                 box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])

@@ -4,10 +4,6 @@ from typing import Tuple
 
 class BoxColors(Enum):
     """
-    Notes
-    -----
-    NOT RGB, BGR
-
     UNKNOWN:
         Doesn't know what this is about
         White
@@ -22,7 +18,12 @@ class BoxColors(Enum):
         Black with yellow parts
     ASSET_CATALYST
         Government people? Not sure
+        * Friends who arent aware of the bot
         Blue
+
+    Notes
+    -----
+    NOT RGB, BGR
     """
 
     UNKNOWN = 0

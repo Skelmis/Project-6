@@ -4,14 +4,14 @@ import itertools
 import logging
 import os
 from pathlib import Path
-from typing import Optional, Union, Tuple, List
+from typing import Optional, Union, List
 from skimage.metrics import structural_similarity as compare_ssim
 
 import cv2
 
 from bot_base import BotBase
 from .box_colours import BoxColors
-from .facial_recognition import FacialRecognition
+from cv.facial_recognition.facial_recognition import FacialRecognition
 
 log = logging.getLogger(__name__)
 
@@ -152,7 +152,6 @@ class CV:
             for p in pts:
                 cv2.circle(img, p, thickness, color, -1)
         else:
-            s = pts[0]
             e = pts[0]
             i = 0
             for p in pts:
