@@ -164,12 +164,29 @@ async def faceboxes(ctx):
     await ctx.send("Reference image", file=file)
 
     # DNN stuff
-    bot.cv.face.predict(image)
+    bot.cv.face.find_face(image)
 
     # Now image
     path = bot.cv.save_picture(image)
     file = discord.File(path)
     await ctx.send("After DNN", file=file)
+
+
+@bot.command()
+async def recognize(ctx):
+    """Attempts to name a detected face"""
+    image = bot.cv.take_picture()
+    path = bot.cv.save_picture(image)
+    file = discord.File(path)
+    await ctx.send("Reference image", file=file)
+
+    # SVC stuff
+    svc_image = bot.cv.face.recognize(image)
+
+    # Now image
+    path = bot.cv.save_picture(svc_image)
+    file = discord.File(path)
+    await ctx.send("After SVC", file=file)
 
 
 @bot.command(aliases=["l"])
