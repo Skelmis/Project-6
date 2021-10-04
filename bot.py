@@ -110,10 +110,8 @@ async def diff(ctx):
     # which are over 50 x 50 pixels
     relevant_contours = bot.cv.get_relevant_differences(contours)
 
-    bot.cv.build_bounding_boxes(image_one, relevant_contours, BoxColors.UNKNOWN)
-    bot.cv.build_bounding_boxes(
-        image_two, relevant_contours, BoxColors.ANALOG_INTERFACE
-    )
+    bot.cv.draw_bounding_boxes(image_one, relevant_contours, BoxColors.ASSET_CATALYST)
+    bot.cv.draw_bounding_boxes(image_two, relevant_contours, BoxColors.ANALOG_INTERFACE)
 
     path = bot.cv.save_picture(image_one)
     file = discord.File(path)

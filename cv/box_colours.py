@@ -20,12 +20,16 @@ class BoxColors(Enum):
     ANALOG_INTERFACE:
         Has the ability to communicate with the box
         Black with yellow parts
+    ASSET_CATALYST
+        Government people? Not sure
+        Blue
     """
 
     UNKNOWN = 0
     THREAT = 1
     BOX_KNOWLEDGE = 2
     ANALOG_INTERFACE = 3
+    ASSET_CATALYST = 4
 
     @staticmethod
     def get_yellow() -> Tuple[int, int, int]:
@@ -45,6 +49,9 @@ class BoxColors(Enum):
         elif self.value == 3:
             # Black
             return 3, 2, 5
+
+        elif self.value == 4:
+            return 255, 32, 0
 
         # Unknown
         return 255, 255, 255

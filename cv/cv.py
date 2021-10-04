@@ -159,7 +159,7 @@ class CV:
                     cv2.line(img, s, e, color, thickness)
                 i += 1
 
-    def build_bounding_boxes(self, image, bounding_boxes, color_enum: BoxColors):
+    def draw_bounding_boxes(self, image, bounding_boxes, color_enum: BoxColors):
         """
         Draws bounding boxes around people
         Parameters
