@@ -169,35 +169,31 @@ class BotBase(commands.Bot):
     ) -> WrappedPerson:
         """Looks up a member in cache or fetches if not found."""
         member = guild.get_member(member_id)
-        if member is not None:
-            return member
+        if member is None:
+            member = await guild.fetch_member(member_id)
 
-        member = await guild.fetch_member(member_id)
         return WrappedPerson(member)
 
     async def get_or_fetch_channel(self, channel_id: int) -> WrappedChannel:
         """Looks up a channel in cache or fetches if not found."""
         channel = self.get_channel(channel_id)
-        if channel:
-            return channel
+        if not channel:
+            channel = await self.fetch_channel(channel_id)
 
-        channel = await self.fetch_channel(channel_id)
         return WrappedChannel(channel)
 
     async def get_or_fetch_guild(self, guild_id: int) -> discord.Guild:
         """Looks up a guild in cache or fetches if not found."""
         guild = self.get_guild(guild_id)
-        if guild:
-            return guild
+        if not guild:
+            guild = await self.fetch_guild(guild_id)
 
-        guild = await self.fetch_guild(guild_id)
         return guild
 
     async def get_or_fetch_user(self, user_id: int) -> WrappedPerson:
         """Looks up a user in cache or fetches if not found."""
         user = self.get_user(user_id)
-        if user:
-            return user
+        if not user:
+            user = await self.fetch_user(user_id)
 
-        user = await self.fetch_user(user_id)
         return WrappedPerson(user)
