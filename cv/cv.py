@@ -189,8 +189,8 @@ class CV:
                 color = color_enum.get_bgr()
             # How long to draw points
             size = 4
-            x_line_length = int(x / 25)
-            y_line_length = int(y / 25)
+            x_line_length = int(w / 25)
+            y_line_length = int(h / 25)
 
             # Set corners
             top_left = (x, y)
