@@ -19,25 +19,39 @@ class CV:
 
         self.image_suffix = itertools.count().__next__
 
-    def take_picture(self, image_name: str = None) -> Optional[str]:
+    def take_picture(self):
         """Takes a picture and saves it
 
         Returns
         -------
-        A path to the image
+        The grabbed image
         """
         ret, frame = self.feed.read()
+        self.feed.release()
         if not ret:
             log.warning("No video feed active to capture from.")
             return None
 
+        return frame
+
+    def save_picture(self, frame, image_name: str = None) -> Optional[str]:
+        """
+        Saves a given picture locally
+
+        Parameters
+        ----------
+        frame
+        image_name
+
+        Returns
+        -------
+
+        """
         image_name = image_name or f"image_{self.image_suffix()}"
         image_name += ".png"
 
         path = os.path.join(self.cwd, "pictures", image_name)
         cv2.imwrite(path, frame)
-
-        self.feed.release()
 
         return path
 

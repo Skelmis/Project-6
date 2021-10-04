@@ -29,7 +29,8 @@ async def on_ready():
 @bot.command(aliases=["picture"])
 async def pic(ctx) -> None:
     """Takes a picture and sends it to discord"""
-    picture_path: str = bot.cv.take_picture()
+    image = bot.cv.take_picture()
+    picture_path: str = bot.cv.save_picture(image)
 
     file = discord.File(picture_path)
     await ctx.send("Imagine taking pictures of people. Tut.", file=file)
