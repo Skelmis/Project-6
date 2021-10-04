@@ -157,6 +157,23 @@ async def showdiff(ctx):
         await ctx.send(file=file)
 
 
+@bot.command()
+async def face(ctx):
+    """Attempts to detect a face"""
+    image = bot.cv.take_picture()
+    path = bot.cv.save_picture(image)
+    file = discord.File(path)
+    await ctx.send("Reference image", file=file)
+
+    # DNN stuff
+    bot.cv.face.predict(image)
+
+    # Now image
+    path = bot.cv.save_picture(image)
+    file = discord.File(path)
+    await ctx.send("After DNN", file=file)
+
+
 @bot.command(aliases=["l"])
 @commands.is_owner()
 async def logout(ctx) -> None:

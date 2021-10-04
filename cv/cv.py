@@ -11,6 +11,7 @@ import cv2
 
 from bot_base import BotBase
 from .box_colours import BoxColors
+from .facial_recognition import FacialRecognition
 
 log = logging.getLogger(__name__)
 
@@ -41,6 +42,8 @@ class CV:
 
         self.min_width = min_width
         self.min_height = min_height
+
+        self.face: FacialRecognition = FacialRecognition(bot, self)
 
     @inject_cam
     def take_picture(self):
