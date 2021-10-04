@@ -55,3 +55,13 @@ class BoxColors(Enum):
 
         # Unknown
         return 255, 255, 255
+
+    def compare_enum(self, other: "BoxColors") -> "BoxColors":
+        """
+        Given two BoxColors, return the 'True' value.
+        This is essentially anything but BoxColors.UNKNOWN
+        """
+        if self.value == 0:
+            return other
+
+        return self

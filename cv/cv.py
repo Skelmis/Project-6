@@ -4,7 +4,7 @@ import itertools
 import logging
 import os
 from pathlib import Path
-from typing import Optional, Union, Tuple
+from typing import Optional, Union, Tuple, List
 from skimage.metrics import structural_similarity as compare_ssim
 
 import cv2
@@ -159,7 +159,9 @@ class CV:
                     cv2.line(img, s, e, color, thickness)
                 i += 1
 
-    def draw_bounding_boxes(self, image, bounding_boxes, color_enum: BoxColors):
+    def draw_bounding_boxes(
+        self, image: np.ndarray, bounding_boxes: List, color_enum: BoxColors
+    ):
         """
         Draws bounding boxes around people
         Parameters
@@ -267,6 +269,38 @@ class CV:
             cv2.line(
                 image, (x + w, middle_y), (x + w - x_line_length, middle_y), color, size
             )
+
+    def get_subset_images(self, image: np.ndarray, contours: List) -> List[np.ndarray]:
+        """
+
+        Parameters
+        ----------
+        image
+            The image to extract changes from
+        contours : List
+            A list of all changes
+
+        Returns
+        -------
+        List[np.ndarray]
+            Subsets from the image containing all changes
+        """
+        subset_images = []
+        for contour in contours:
+            x, y, w, h = cv2.boundingRect(contour)
+            subset_images.append(self.getSubRect(image, (x, y, w, h)))
+
+        return subset_images
+
+    def getSubRect(self, image, rect):
+        x, y, w, h = rect
+        return image[y : y + h, x : x + w]
+
+    def classify_box_color(self, image: np.ndarray) -> BoxColors:
+        """
+        Given an image, attempt to classify the
+        relevant BoxColor that is required
+        """
 
     def release(self) -> None:
         """Cleans up video objects before shutdown"""

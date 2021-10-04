@@ -2,7 +2,9 @@ import asyncio
 import logging
 import os
 from pprint import pprint
+from typing import List
 
+import numpy as np
 import cv2
 import discord
 from discord.ext import commands
@@ -120,6 +122,39 @@ async def diff(ctx):
     path = bot.cv.save_picture(image_two)
     file = discord.File(path)
     await ctx.send(file=file)
+
+
+@bot.command()
+async def showdiff(ctx):
+    """Shows only the differences"""
+    image_one = bot.cv.take_picture()
+    await asyncio.sleep(5)
+    image_two = bot.cv.take_picture()
+
+    diff_score, actual_diffs = bot.cv.compare_images(image_one, image_two)
+    _, contours = bot.cv.get_image_differences(actual_diffs)
+
+    # Loop over all contours and get all
+    # which are over 50 x 50 pixels
+    relevant_contours = bot.cv.get_relevant_differences(contours)
+
+    await ctx.send("Here are all the changes from within image_one")
+    subset_images: List[np.ndarray] = bot.cv.get_subset_images(
+        image_one, relevant_contours
+    )
+    for image in subset_images:
+        path = bot.cv.save_picture(image)
+        file = discord.File(path)
+        await ctx.send(file=file)
+
+    await ctx.send("Here are the same regions in image two")
+    subset_images: List[np.ndarray] = bot.cv.get_subset_images(
+        image_two, relevant_contours
+    )
+    for image in subset_images:
+        path = bot.cv.save_picture(image)
+        file = discord.File(path)
+        await ctx.send(file=file)
 
 
 @bot.command(aliases=["l"])
