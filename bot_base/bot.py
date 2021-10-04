@@ -2,11 +2,8 @@ import datetime
 import sys
 import logging
 import traceback
-from typing import Union
-
 import discord
 import humanize
-from discord import abc
 from discord.ext import commands
 
 from bot_base.blacklist import BlacklistManager
