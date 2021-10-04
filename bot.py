@@ -8,7 +8,7 @@ import discord
 from discord.ext import commands
 
 from bot_base import BotBase
-from cv import CV
+from cv import CV, BoxColors
 
 bot = BotBase(
     command_prefix=".",
@@ -94,7 +94,7 @@ async def com(ctx):
 async def diff(ctx):
     """Given two images, return a box around the differences"""
     image_one = bot.cv.take_picture()
-    await asyncio.sleep(10)
+    await asyncio.sleep(5)
     image_two = bot.cv.take_picture()
 
     diff_score, actual_diffs = bot.cv.compare_images(image_one, image_two)
@@ -108,22 +108,12 @@ async def diff(ctx):
 
     # Loop over all contours and get all
     # which are over 50 x 50 pixels
-    relevant_contours = []
-    for contour in contours:
-        x, y, w, h = cv2.boundingRect(contour)
+    relevant_contours = bot.cv.get_relevant_differences(contours)
 
-        print(w, h)
-
-        if w > 50 and h > 50:
-            relevant_contours.append(contour)
-
-    for contour in relevant_contours:
-        # compute the bounding box of the contour and then draw the
-        # bounding box on both input images to represent where the two
-        # images differ
-        x, y, w, h = cv2.boundingRect(contour)
-        cv2.rectangle(image_one, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        cv2.rectangle(image_two, (x, y), (x + w, y + h), (0, 0, 255), 2)
+    bot.cv.build_bounding_boxes(image_one, relevant_contours, BoxColors.UNKNOWN)
+    bot.cv.build_bounding_boxes(
+        image_two, relevant_contours, BoxColors.ANALOG_INTERFACE
+    )
 
     path = bot.cv.save_picture(image_one)
     file = discord.File(path)
