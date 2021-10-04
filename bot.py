@@ -179,11 +179,12 @@ async def recognize(ctx):
     initial_image = bot.cv.take_picture()
     path = bot.cv.save_picture(initial_image)
     file = discord.File(path)
-    await ctx.send("Reference image", file=file)
+    # await ctx.send("Reference image", file=file)
 
     # SVC stuff
     data: RecognizeReturn = bot.cv.face.recognize(initial_image)  # noqa
     image = data.image
+    color = BoxColors.from_name(data.name)
 
     bot.cv.draw_face_box(
         image,
@@ -191,14 +192,17 @@ async def recognize(ctx):
         data.top_left_y,
         data.bottom_right_x,
         data.bottom_right_y,
-        BoxColors.from_name(data.name),
+        color,
         data.name,
     )
 
-    # Now image
+    # Classified image
     path = bot.cv.save_picture(image)
     file = discord.File(path)
-    await ctx.send("After SVC", file=file)
+    await ctx.send(
+        f"Looks like `{data.name}` to me. He's classified as `{color.name.lower().replace('_', ' ').title()}`",
+        file=file,
+    )
 
 
 @bot.command(aliases=["l"])
