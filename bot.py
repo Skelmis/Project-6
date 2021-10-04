@@ -10,7 +10,7 @@ import discord
 from discord.ext import commands
 
 from bot_base import BotBase
-from cv import CV, BoxColors
+from cv import CV, BoxColors, RecognizeReturn
 
 bot = BotBase(
     command_prefix=".",
@@ -175,16 +175,27 @@ async def faceboxes(ctx):
 @bot.command()
 async def recognize(ctx):
     """Attempts to name a detected face"""
-    image = bot.cv.take_picture()
-    path = bot.cv.save_picture(image)
+    initial_image = bot.cv.take_picture()
+    path = bot.cv.save_picture(initial_image)
     file = discord.File(path)
     await ctx.send("Reference image", file=file)
 
     # SVC stuff
-    svc_image = bot.cv.face.recognize(image)
+    data: RecognizeReturn = bot.cv.face.recognize(initial_image)  # noqa
+    image = data.image
+
+    bot.cv.draw_face_box(
+        image,
+        data.top_left_x,
+        data.top_left_y,
+        data.bottom_right_x,
+        data.bottom_right_y,
+        BoxColors.ASSET_CATALYST,
+        data.name,
+    )
 
     # Now image
-    path = bot.cv.save_picture(svc_image)
+    path = bot.cv.save_picture(image)
     file = discord.File(path)
     await ctx.send("After SVC", file=file)
 

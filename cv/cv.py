@@ -272,6 +272,117 @@ class CV:
                 image, (x + w, middle_y), (x + w - x_line_length, middle_y), color, size
             )
 
+    def draw_face_box(
+        self,
+        image: np.ndarray,
+        top_left_x: int,
+        top_left_y: int,
+        bottom_right_x: int,
+        bottom_right_y: int,
+        color_enum: BoxColors,
+        name: str,
+    ):
+        # Draw 'bigger' corners
+        if color_enum == BoxColors.ANALOG_INTERFACE:
+            # Also denoted with yellow points on corner and middle points
+            color = BoxColors.get_yellow()
+        else:
+            color = color_enum.get_bgr()
+
+        w = bottom_right_x - top_left_x
+        h = bottom_right_y - top_left_y
+        x = top_left_x
+        y = top_left_y
+
+        # How long to draw points
+        size = 4
+        x_line_length = int(w / 25)
+        y_line_length = int(h / 25)
+
+        # Set corners
+        top_left = (x, y)
+        bottom_left = (x, y + h)
+        top_right = (x + w, y)
+        bottom_right = (x + w, y + h)
+
+        # Draw a dotted rectangle
+        self.drawline(image, top_left, top_right, color_enum.get_bgr(), size - 2)
+        self.drawline(image, top_left, bottom_left, color_enum.get_bgr(), size - 2)
+        self.drawline(image, top_right, bottom_right, color_enum.get_bgr(), size - 2)
+        self.drawline(image, bottom_left, bottom_right, color_enum.get_bgr(), size - 2)
+
+        # Draw corners
+        # Top left
+        cv2.line(image, top_left, (x, y + y_line_length), color, size)
+        cv2.line(image, top_left, (x + x_line_length, y), color, size)
+
+        # Top right
+        cv2.line(image, top_right, (top_right[0], y + y_line_length), color, size)
+        cv2.line(
+            image,
+            top_right,
+            (top_right[0] - x_line_length, top_right[1]),
+            color,
+            size,
+        )
+
+        # Bottom left
+        cv2.line(
+            image,
+            bottom_left,
+            (bottom_left[0], bottom_left[1] - y_line_length),
+            color,
+            size,
+        )
+        cv2.line(
+            image,
+            bottom_left,
+            (bottom_left[0] + x_line_length, bottom_left[1]),
+            color,
+            size,
+        )
+
+        # Bottom right
+        cv2.line(
+            image,
+            bottom_right,
+            (bottom_right[0], bottom_right[1] - y_line_length),
+            color,
+            size,
+        )
+        cv2.line(
+            image,
+            bottom_right,
+            (bottom_right[0] - x_line_length, bottom_right[1]),
+            color,
+            size,
+        )
+
+        # Draw lines in the middle
+        middle_x: int = (w // 2) + x
+        middle_y: int = (h // 2) + y
+
+        cv2.line(image, (middle_x, y), (middle_x, y + y_line_length), color, size)
+        cv2.line(
+            image, (middle_x, y + h), (middle_x, y + h - y_line_length), color, size
+        )
+        cv2.line(image, (x, middle_y), (x + x_line_length, middle_y), color, size)
+        cv2.line(
+            image, (x + w, middle_y), (x + w - x_line_length, middle_y), color, size
+        )
+
+        # Add name onto person
+        y = top_left_y - 10 if top_left_y - 10 > 10 else top_left_y + 10
+        cv2.putText(
+            image,
+            name,
+            (top_left_x, y),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.45,
+            (0, 0, 255),
+            2,
+        )
+
     def get_subset_images(self, image: np.ndarray, contours: List) -> List[np.ndarray]:
         """
 

@@ -5,6 +5,8 @@ import imutils
 import numpy as np
 import cv2
 
+from cv.facial_recognition.recognize_data import RecognizeReturn
+
 
 class FacialRecognition:
     def __init__(self, bot, cv):
@@ -62,7 +64,7 @@ class FacialRecognition:
                     2,
                 )
 
-    def recognize(self, image: np.ndarray) -> (np.ndarray, str):
+    def recognize(self, image: np.ndarray) -> RecognizeReturn:
         """Recognize a face from an image
 
         Returns
@@ -109,7 +111,7 @@ class FacialRecognition:
         detector.setInput(imageBlob)
         detections = detector.forward()
 
-        detected_name = None
+        return_value = RecognizeReturn(image=image)
 
         # loop over the detections
         for i in range(0, detections.shape[2]):
@@ -143,19 +145,25 @@ class FacialRecognition:
                 proba = preds[j]
                 name = le.classes_[j]
 
+                return_value.name = name
+                return_value.top_left_x = startX
+                return_value.top_left_y = startY
+                return_value.bottom_right_x = endX
+                return_value.bottom_right_y = endY
+
                 # draw the bounding box of the face along with the associated
                 # probability
-                text = "{}: {:.2f}%".format(name, proba * 100)
-                y = startY - 10 if startY - 10 > 10 else startY + 10
-                cv2.rectangle(image, (startX, startY), (endX, endY), (0, 0, 255), 2)
-                cv2.putText(
-                    image,
-                    text,
-                    (startX, y),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.45,
-                    (0, 0, 255),
-                    2,
-                )
+                # text = "{}: {:.2f}%".format(name, proba * 100)
+                # y = startY - 10 if startY - 10 > 10 else startY + 10
+                # cv2.rectangle(image, (startX, startY), (endX, endY), (0, 0, 255), 2)
+                # cv2.putText(
+                #     image,
+                #     text,
+                #     (startX, y),
+                #     cv2.FONT_HERSHEY_SIMPLEX,
+                #     0.45,
+                #     (0, 0, 255),
+                #     2,
+                # )
 
-        return image
+        return return_value
