@@ -188,7 +188,7 @@ class CV:
             else:
                 color = color_enum.get_bgr()
             # How long to draw points
-            size = ((x + y) // 2) // 50
+            size = 4
             x_line_length = int(x / 25)
             y_line_length = int(y / 25)
 
