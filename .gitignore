@@ -3,3 +3,5 @@ venv/
 cv/pictures/*
 cv/facial_recognition/dataset/*
 cv/facial_recognition/output/*
+cv/facial_recognition/data_cleaning/input/*
+cv/facial_recognition/data_cleaning/output/*

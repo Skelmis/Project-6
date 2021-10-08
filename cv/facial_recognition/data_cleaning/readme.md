@@ -1,0 +1,1 @@
+Devoted to manually extracting faces from images
