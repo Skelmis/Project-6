@@ -182,25 +182,34 @@ async def recognize(ctx):
     # await ctx.send("Reference image", file=file)
 
     # SVC stuff
-    data: RecognizeReturn = bot.cv.face.recognize(initial_image)  # noqa
-    image = data.image
-    color = BoxColors.from_name(data.name)
+    try:
+        data: List[RecognizeReturn] = bot.cv.face.recognize(initial_image)  # noqa
+        if len(data) == 0:
+            return await ctx.send("No people detected")
+    except:
+        return await ctx.send("No people detected")
 
-    bot.cv.draw_face_box(
-        image,
-        data.top_left_x,
-        data.top_left_y,
-        data.bottom_right_x,
-        data.bottom_right_y,
-        color,
-        data.name,
-    )
+    names = ""
+    for person in data:
+        image = person.image
+        color = BoxColors.from_name(person.name)
+
+        bot.cv.draw_face_box(
+            image,
+            person.top_left_x,
+            person.top_left_y,
+            person.bottom_right_x,
+            person.bottom_right_y,
+            color,
+            person.name,
+        )
+        names += f"`{person.name}` - {color.name.lower().replace('_', ' ').title()}\n"
 
     # Classified image
-    path = bot.cv.save_picture(image)
+    path = bot.cv.save_picture(data[0].image)
     file = discord.File(path)
     await ctx.send(
-        f"Looks like `{data.name}` to me. He's classified as `{color.name.lower().replace('_', ' ').title()}`",
+        f"This image contains:\n{names}",
         file=file,
     )
 

@@ -1,5 +1,6 @@
 import os
 import pickle
+from typing import List
 
 import imutils
 import numpy as np
@@ -64,7 +65,7 @@ class FacialRecognition:
                     2,
                 )
 
-    def recognize(self, image: np.ndarray) -> RecognizeReturn:
+    def recognize(self, image: np.ndarray) -> List[RecognizeReturn]:
         """Recognize a face from an image
 
         Returns
@@ -111,7 +112,7 @@ class FacialRecognition:
         detector.setInput(imageBlob)
         detections = detector.forward()
 
-        return_value = RecognizeReturn(image=image)
+        return_value = []
 
         # loop over the detections
         for i in range(0, detections.shape[2]):
@@ -145,11 +146,14 @@ class FacialRecognition:
                 proba = preds[j]
                 name = le.classes_[j]
 
-                return_value.name = name
-                return_value.top_left_x = startX
-                return_value.top_left_y = startY
-                return_value.bottom_right_x = endX
-                return_value.bottom_right_y = endY
+                val = RecognizeReturn(image=image)
+                val.name = name
+                val.top_left_x = startX
+                val.top_left_y = startY
+                val.bottom_right_x = endX
+                val.bottom_right_y = endY
+
+                return_value.append(val)
 
                 # draw the bounding box of the face along with the associated
                 # probability
