@@ -2,3 +2,4 @@ venv/
 .idea/
 cv/pictures/*
 cv/facial_recognition/dataset/*
+cv/facial_recognition/output/*
