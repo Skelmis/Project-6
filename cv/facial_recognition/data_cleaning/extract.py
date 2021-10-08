@@ -7,7 +7,7 @@ import numpy as np
 upper_cwd = str(Path(__file__).parents[1])
 cwd = str(Path(__file__).parents[0])
 
-min_face_confidence = 0.5
+min_face_confidence = 0.75
 counter = 0
 
 
@@ -64,11 +64,11 @@ def main():
     with os.scandir(os.path.join(cwd, "input")) as scanner:
         for photo_path in scanner:
             path: str = photo_path.path
-            print(path)
+            # print(path)
             if path.endswith("png"):
                 file_type = "png"
             else:
-                file_type = "jpeg"
+                file_type = "jpg"
 
             photo = cv2.imread(path)
             find_face(photo, file_type)
