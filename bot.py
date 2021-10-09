@@ -216,19 +216,20 @@ async def recognize(ctx):
     )
 
 
+@tasks.loop(seconds=2.5)
+async def process_world():
+    image = bot.cv.take_picture()
+    await bot.manager.handle_new(image)
+
+
 @bot.command(aliases=["l"])
 @commands.is_owner()
 async def logout(ctx) -> None:
     """Gracefully shuts the bot down"""
     bot.cv.release()
+    process_world.stop()
     await ctx.send("Logging out")
     await bot.close()
-
-
-@tasks.loop(seconds=2.5, count=5)
-async def process_world():
-    image = bot.cv.take_picture()
-    await bot.manager.handle_new(image)
 
 
 process_world.start()

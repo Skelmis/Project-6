@@ -51,10 +51,15 @@ class Manager:
             # Don't need to do anything
             return
 
+        print(f"Attempting to handle a group of {len(self.current_group)} photos")
+
         time = nextcord.utils.utcnow()
         channel = await self.bot.get_or_fetch_channel(self.bot.project_6_id)  # noqa
         initial_message: nextcord.Message = await channel.send(
-            embed=nextcord.Embed(description="Movement detectedd", timestamp=time)
+            embed=nextcord.Embed(
+                description=f"Movement detected, {len(self.current_group)} frames",
+                timestamp=time,
+            )
         )
         thread: nextcord.Thread = await initial_message.create_thread(
             name=f"Image collection"
