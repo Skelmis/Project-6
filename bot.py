@@ -6,11 +6,11 @@ from typing import List
 
 import numpy as np
 import cv2
-import discord
-from discord.ext import commands
+import nextcord as discord
+from nextcord.ext import commands, tasks
 
 from bot_base import BotBase
-from cv import CV, BoxColors, RecognizeReturn
+from cv import CV, BoxColors, RecognizeReturn, Manager
 
 bot = BotBase(
     command_prefix=".",
@@ -18,6 +18,7 @@ bot = BotBase(
     mongo_database_name="project_6",
 )
 bot.cv = CV(bot)
+bot.manager = Manager(bot)
 bot.project_6_id = 894497833053462529
 
 
@@ -165,7 +166,8 @@ async def faceboxes(ctx):
     await ctx.send("Reference image", file=file)
 
     # DNN stuff
-    bot.cv.face.find_face(image)
+    faces = bot.cv.face.find_face(image)
+    bot.cv.face.draw_faces(image, faces)
 
     # Now image
     path = bot.cv.save_picture(image)
@@ -223,4 +225,11 @@ async def logout(ctx) -> None:
     await bot.close()
 
 
+@tasks.loop(seconds=2.5, count=5)
+async def process_world():
+    image = bot.cv.take_picture()
+    await bot.manager.handle_new(image)
+
+
+process_world.start()
 bot.run(os.environ["TOKEN"])

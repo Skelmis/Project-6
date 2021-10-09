@@ -6,6 +6,7 @@ import imutils
 import numpy as np
 import cv2
 
+from cv.facial_recognition.face import Face
 from cv.facial_recognition.recognize_data import RecognizeReturn
 
 
@@ -24,7 +25,7 @@ class FacialRecognition:
         """
         return cv2.dnn.blobFromImage(cv2.resize(image, (300, 300)))
 
-    def find_face(self, image: np.ndarray):
+    def find_face(self, image: np.ndarray) -> List[Face]:
         """Entry to this class for predictions"""
         h, w = image.shape[:2]
 
@@ -38,6 +39,8 @@ class FacialRecognition:
 
         detections = net.forward()
 
+        faces = []
+
         for i in range(0, detections.shape[2]):
             # extract the confidence (i.e., probability) associated with the
             # prediction
@@ -50,20 +53,31 @@ class FacialRecognition:
                 box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
                 (startX, startY, endX, endY) = box.astype("int")
 
-                # draw the bounding box of the face along with the associated
-                # probability
-                text = "{:.2f}%".format(confidence * 100)
-                y = startY - 10 if startY - 10 > 10 else startY + 10
-                cv2.rectangle(image, (startX, startY), (endX, endY), (0, 0, 255), 2)
-                cv2.putText(
-                    image,
-                    text,
-                    (startX, y),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.45,
-                    (0, 0, 255),
-                    2,
-                )
+                faces.append(Face(confidence * 100, startX, startY, endX, endY))
+
+        return faces
+
+    def draw_faces(self, image: np.ndarray, faces: List[Face]) -> None:
+        for face in faces:
+            startX = face.top_left_x
+            startY = face.top_left_y
+            endX = face.bottom_right_x
+            endY = face.bottom_right_y
+
+            # draw the bounding box of the face along with the associated
+            # probability
+            text = "{:.2f}%".format(face.percent)
+            y = startY - 10 if startY - 10 > 10 else startY + 10
+            cv2.rectangle(image, (startX, startY), (endX, endY), (0, 0, 255), 2)
+            cv2.putText(
+                image,
+                text,
+                (startX, y),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.45,
+                (0, 0, 255),
+                2,
+            )
 
     def recognize(self, image: np.ndarray) -> List[RecognizeReturn]:
         """Recognize a face from an image

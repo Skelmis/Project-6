@@ -1,6 +1,6 @@
 from typing import Union
 
-from discord import abc
+from nextcord import abc
 
 from bot_base.wraps.meta import Meta
 

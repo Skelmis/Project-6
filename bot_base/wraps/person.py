@@ -1,6 +1,6 @@
 from typing import Union
 
-import discord
+import nextcord as discord
 
 from bot_base.wraps.meta import Meta
 

@@ -2,9 +2,9 @@ import datetime
 import sys
 import logging
 import traceback
-import discord
+import nextcord as discord
 import humanize
-from discord.ext import commands
+from nextcord.ext import commands
 
 from bot_base.blacklist import BlacklistManager
 from bot_base.context import BotContext
